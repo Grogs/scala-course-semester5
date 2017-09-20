@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>reveal.js</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/sky.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Mermaid -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.css">
+    <style>
+      .mermaid .label  {
+        color: white;
+      }
+
+      .node rect {
+        fill: #005894;
+      }
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <style>
+      .reveal .footer {
+        position: absolute;
+        bottom: 1em;
+        left: 1em;
+        font-size: 0.7em;
+      }
+
+      /*Theme overrides*/
+      .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+        text-transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class='footer'>
+        <a href="https://grogs.github.io/scala-course">grogs.github.io/scala-course</a>
+      </div>
+      <div class="slides">
+        <section data-markdown data-separator="^~~~~" data-separator-vertical="^~" data-notes="^Note:">
+          <script type="text/template">
+          ## Full Stack Scala  
+
+          ### Lesson 6
+
+          ~~~~
+          Last week we made our hotel listings page searchable
+          ~
+          This week we will make it more interactive
+          ~
+          [DEMO](https://limitless-lowlands-73789.herokuapp.com/hotels/search?destination=london&distance=2)
+          
+
+          ~~~~
+          ###Step 1 - ScalaTags
+          ~
+          First we need to migrate from Play's Twirl templates to Li Haoyi's ScalaTags.
+          ~
+          ScalaTags is a library for generating HTML.
+          ~
+          It's a pure Scala library (with no JVM dependencies)
+          ~
+          This means we can share the code across the frontend and backend
+          ~
+          It also means we get autocompletion in IntelliJ.
+          ~
+          Documentation: http://www.lihaoyi.com/scalatags/
+          ~
+          Fix the existing tests from last week, by implementing `views.HotelListingTable.render`
+
+          
+          ~~~~
+          ###Step 2 - Make the search interactive
+          ~
+          Instead of letting the user update their search and resubmit...
+
+          ...Let's just update the table in realtime when the search is update.
+          ~
+          To do this, we need to add event handlers for every time the user changes the search.
+          ~
+          [DEMO](https://limitless-lowlands-73789.herokuapp.com/hotels/search?destination=london&distance=2)
+          ~
+          Next we need to use Li Haoyi's Autowire library to call fetch the new search results
+
+          Documentation: https://github.com/lihaoyi/autowire#minimal-example
+          ~
+          Once you have the search results, re-use the `HotelListingsTable` to re-render the table
+          ~
+          Then replace the old table with the new one
+          ~
+          Remove the Search button. It's not needed anymore!
+          
+
+          </script>         
+        </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        history: true,
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+
+    <!-- Mermaid -->
+    <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+  </body>
+</html>

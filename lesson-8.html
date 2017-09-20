@@ -1,0 +1,207 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>reveal.js</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/sky.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName( 'head' )[0].appendChild( link );
+	</script>
+	<style>
+		html.dimbg .slide-background {
+			opacity: 0.3 !important;
+			filter: blur(4px);
+		}
+		.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+			text-transform: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section data-markdown data-separator="^~~~~" data-separator-vertical="^~" data-notes="^Note:">
+			    <script type="text/template">
+
+WebSockets and Actors
+~
+What are websockets?
+
+Note: Who's heard of web sockets?
+~
+Two-way communication between browser and server
+
+Note: 
+* As opposed to the typical request/response model.
+* Traditionally you request a page, get a response, render, and you're done.
+* With websockets, you open a conneciton and keep it open as long as you like - normally as long as the page is open.
+* This is quite common - Facebook chat is a typical example.
+~~~~
+Push vs Pull
+~
+Historically we had AJAX polling to show live changes on a page
+
+Client just keeps "polling" the server to see if there are updates <!-- .element: class="fragment" -->
+~
+Then came along "long polling"
+
+![Long Polling diagram](longpolling.jpg)  
+
+Client makes request to server.  <!-- .element: class="fragment" -->
+
+Server holds the connection open until there is an event to "push" to the client.  <!-- .element: class="fragment" -->
+
+Then the client sends the next long-living request  <!-- .element: class="fragment" -->
+
+Note:
+* Are there any potential problems you can see with this?
+~
+Then came along WebSockets and Server Sent Events
+~
+**Server sent events (SSE)** let you push events from the server single long-lived connection.  
+  
+<br />
+**WebSockets** give you a *bidirectional* long-lived connection
+
+Note: 
+* SSE is more efficient than long-polling
+~
+**WebSockets** mimics HTTP to start a connection, then switches to lower level Data Frames.  
+
+Good browser support, but proxies can have issues. <!-- .element: class="fragment" -->
+~
+**Server Sent Events** use HTTP so avoid any issues with proxies.  
+
+But they have less browser support and are limited to one-way server-to-client communication. <!-- .element: class="fragment" -->
+
+Note: IE/Edge still doesn't have support.
+~
+Play has great support for WebSockets  
+
+Each WebSocket connection is modelled as an Akka Actor
+
+~~~~
+The Actor Model
+~
+A way to model concurrent computation.  
+
+Sometimes refered to as *"light-weight threads"*
+~ 
+An actor consists of a mailbox of messages and a receive method.
+
+![Simple Actor](actor.png)
+~
+The `receive` method processes one message at a time from the mailbox.
+~
+Actors are often stateful.
+
+![Actors have state](actorstate.png)
+
+Messages are processed sequentially - so no race conditions. 
+~
+
+Simple example 
+
+```scala
+class PongActor extends Actor {
+  def receive = {
+    case "ping" => sender() ! "pong"
+  }
+}
+```
+
+Notes:
+* Mailbox is hidden
+* Received methods will only be called once at a time.
+	* So you could safely record keep state in here (e.g. the count of pings)
+* In this example `receive` is a partial function, so it would fail on any input other than "ping"
+	* Actors have an idea of supervision, which will handle such scenarios. I won't go into that now unless anyone is interested.
+* sender() is a special method which lets you get a reference to the Actor that sent the current message.
+~
+Actors communicate by sending messages.  
+
+![Actors send messages](actormessaging.png)
+
+Note:This is closer to how Alan Kay initially conceived Object Oriented Programming in Smalltalk.  
+~
+By keeping messages immutable, we don't have to worry about concurrency issues.
+
+Note: 
+* If message is immutable, you can pass it around and they cannot modify it.  
+* Erlang (and Elixir) actually make use of the fact that messages are sent instead of memory being shared. It allows them to independentally GC actors and avoid long pauses.
+~
+You can model your whole system using Actors by composing them to form Actor Systems.  
+
+![Actor System](actorsystem.png)
+~ 
+Akka is the dominant Actor implementation for Scala &amp; Java
+
+Note:
+Java is absolutely a first class citizen. 
+~
+Play is implemented on top of Akka HTTP.
+
+Akka HTTP is implemented with Akka Actors.
+
+Note: 
+* We use Akka Actors in my team. We're actually in the process of removing them. 
+* They're a low level abstraction, which makes them hard to reason about.
+~~~~
+### WebSockets and Actors in Play 
+~
+In Play, we model each side of a WebSocket connection as an actor.   
+~
+A pair of actors is created for every websocket connection.  
+
+<img class="plain"  src="PlayActors.png"/>
+
+Note:
+* So if there were three simultantious users connected with websockets, we would have 6 Actors.
+* Actors are a cheap abstraction, so we can have many at once.
+~
+The client and server can both independentally send messages to each other.
+
+Note: So you can use WebSockets for one way streaming, like SSE, or request/response, or whatever you want.
+~
+
+Now let's see some code
+
+[On GitHub](https://github.com/Grogs/scala-course/commit/88b441930983a3665e71c4fe49162810510b9ade)  
+
+			    </script>
+			</section>
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+	</html>

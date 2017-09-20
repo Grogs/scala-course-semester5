@@ -1,0 +1,340 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>reveal.js</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/sky.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Mermaid -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.css">
+    <style>
+      .mermaid .label  {
+        color: white;
+      }
+
+      .node rect {
+        fill: #005894;
+      }
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <style>
+      .reveal .footer {
+        position: absolute;
+        bottom: 1em;
+        left: 1em;
+        font-size: 0.7em;
+      }
+
+      /*Theme overrides*/
+      .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+        text-transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class='footer'>
+        <a href="https://grogs.github.io/scala-course">grogs.github.io/scala-course</a>
+      </div>
+      <div class="slides">
+        <section data-markdown data-separator="^~~~~" data-separator-vertical="^~" data-notes="^Note:">
+          <script type="text/template">
+
+## Full Stack Scala  
+
+### Lesson 1
+
+~
+Before we start, let's kick off some downloads.
+
+Note:
+* This will take a while!
+~
+Download IntelliJ
+
+https://www.jetbrains.com/idea/
+
+Note: we'll get round to installing it later
+~
+Checkout this git project:  
+
+`git clone https://github.com/grogs/scala-course`
+
+Note:
+* is everyone a little familiar with git
+* does everyone have git installed?
+~
+Start downloading the project's dependencies
+
+```
+cd scala-course
+./sbt compile
+```
+~~~~
+
+## Introductions
+* Who are you?  
+* What do you do here at Expedia?  
+* What are you looking to get from the course?
+
+Note:
+* Whilst that's churning away in the background, let's continue.
+
+~~~~
+
+## Course Plan
+* Learn to build web apps with Scala.
+* Play Framework for backend
+* Scala.js on the frontend
+* You should be able to go away and build your own rich web applications
+
+Note:
+* This isn't "Scala for Java developers" - although I think that'd be a good course and we may run one next semester.
+* Instead, we'll focus on using Scala/Play/Scala.js as a productive platform to build webapps end to end.
+* We'll use Play on the backend because it's really quick to get up and running, and provides a really nice developer experience.
+* We'll learn more about that next week.
+* We're going to use Scala.js on the frontend... Because I think Scala is cool and you should use it in the browser. Also because there are some real advantages to using the same language across the frontend and backend.
+* Again, we'll learn more about this next week.
+
+~
+
+Today let's start with an introduction to Scala itself
+
+~
+Starting with some history of where it came from
+
+~
+- __1996__ Java 1.0 released
+~
+- __1997__ Pizza released by Martin Odersky and Philip Wadler
+  * Superset of Java. Compiled down to Java code. 
+  * Contained _polymorphism (AKA generics)_, _algebraic types_ (AKA case classes), _high order functions_
+~
+- __1998__ GJ released by Odersky, Wadler et al. 
+  * Compiled to JVM bytecode. 
+  * Kept generics (using type erasure), dropped algebraic types and higher order functions
+~
+- __2000__ Sun Microsystems adopts GJ as `javac` in JDK 1.3
+  * With generics removed
+
+<div><div class="mermaid">
+  graph TB;
+  java1["Java 1.0"]--> d1[" "] 
+  d1 --> d2[" "]
+  pizza["Pizza"] --> gj["GJ"]
+  java1.3["Java 1.3"]
+  d2 --> java1.3
+  gj --> java1.3
+  style d1 height:0
+  style d2 height:0
+</div></div>
+
+~
+__2004__ Java 1.5 released, with generics from GJ 
+<div><div class="mermaid">
+  graph TB;
+  java1["Java 1.0"]--> d1[" "] 
+  d1 --> d2[" "]
+  pizza["Pizza"] --> gj["GJ"]
+  java1.3["Java 1.3"] --> java1.5["Java 1.5"]
+  d2 --> java1.3
+  gj --> java1.3
+  gj --> java1.5
+  style d1 height:0
+  style d2 height:0
+</div></div>          
+~
+### Functional Programming
+~
+__Lambda calculus__ developed in 1930s  
+Note:
+in the US by Alonzo Church
+
+~
+__Lisp__ developed in 1950s  
+Note:
+by John McCarthy whilst he was at MIT
+~
+__ML__ developed in 1970s  
+Note:
+at Edinburgh University
+~
+__Haskell__ version 1.0 was released in 1990
+Note:
+* Design by commitee - but went pretty well. 
+* GHC, the dominant implementation, was initially developed at the University of Glasgow.
+* The two lead developers now work for Microsoft Research, still working on the language.
+
+~
+Odersky develops __Funnel__ 1999-2001
+  - compiled to JVM bytecode
+  - blended OO and FP
+
+Note:
+* After working on Pizza and GJ
+* Precursor to Scala.
+~
+### Scala  
+~
+__2004__ _Scala_ publically released
+  * Blended OO and FP
+  * Written in Java  
+  * Included features from Pizza
+Note:
+features like case classes and higher order functions
+~
+Current 2.x versions first released in __2006__  
+
+It was bootstrapped (written in Scala)  
+
+Now we're up to 2.12  
+Note:
+This is the current version of Scala.
+~
+Looking forward
+~
+* Dotty AKA Scala 3.0, is in progress. 
+Note:
+* You can already use it. It can use Java/Scala 2.11 libraries
+* Simplifies the theory underlying the language, and the compiler itself - a better base to iterate on
+* Should give us faster compilation, and much cleaner compiler codebase to evolve
+~
+To review - what is Scala?
+~
+Scala JVM-based language that blends OOP and FP.
+
+Note:
+Written by someone who knows a lot about compilers, who ever wrote an earleir version of the Java compiler.
+~
+Why use Scala?
+~
+There are a number of reasons people come to the language:
+
+* Better Java
+* Performance / High Scalability
+* Datascience ecosystem
+* Functional programming that's pragmatic
+
+Note:
+* Depending on what you're lookign for with a "better Java", Kotlin might be a better fit.
+* Performance/scalability is definitely a focus. We hear a lot about Akka, but functional programming and immutability are great for making scalable systems.
+* Also, there are a number of people from a Python/Ruby background who wanted the performance of Java with nicer syntax
+* Datascience - they wanted to leverage the JVM ecosystem (mainly Hadoop), but they wanted a more concise language. Generally you do datascience with Scala because of the scalability, and the FP helps there.
+* I know a few people that were really into Haskell, but went with Scala due to the larger job market.
+
+
+~~~~
+### Running our skeleton project
+~
+Have IntelliJ and SBT finished downloading?
+~
+
+Install IntelliJ, and the Scala plugin.  
+  
+Open the project's build.sbt in IntelliJ.  
+  
+Hit Cmd+F9 to build the project. Any errors?
+
+Note:
+* Ctrl+F9 on Windows.
+
+~
+
+Run the app with:
+
+`./sbt run`
+
+Then browse to http://localhost:9000
+
+Note: Any errors in the terminal
+~
+We're done.  
+          </script>         
+        </section>
+      </div>
+    </div>
+
+<!-- Now let's look at some Scala code
+          ~
+          Starting with the obligatory hello world
+
+          ```
+          object Main {
+            def main(args: Array[String]): Unit = {
+              println("Hello world!")
+            }
+          }
+          ``` 
+
+          Note:
+          * No semicolons
+          * No `public` access modifier
+          * Methods/functions definition starts with `def`
+          * No explicit return statement
+          * Types are written after identifiers
+          * 'Unit' type. 
+          * We could omit `:Unit` and rely on type inference
+          * We can omit the braces around the method definition
+          * Like variable assignment, methods declaration has `=`
+          
+          Whirlwind tour of Scala:
+          * Type inference.
+          * everything's an object
+          * `if` and `for` are expressions not statements
+            * Scala `if` is like Java's ternary operator 
+          * Case classes / ADT (including traits)
+            * Constructor, fields are public and immutable
+            * apply method on combanion object
+            * Hashcode/equals/toString
+            * copy method
+            * Pattern matching
+          * Collections
+            * Combinators (+ type inference)
+            * pattern matching in assignment
+          * For comprehensions
+            * map / flatMap / filter
+            * pattern matching
+          * Futures
+            * ExecutionContext is your threadpool
+            * for comprehensions
+ -->
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        history: true,
+        // showNotes: true,
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+
+    <!-- Mermaid -->
+    <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+  </body>
+</html>

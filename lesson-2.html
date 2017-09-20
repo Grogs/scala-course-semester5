@@ -1,0 +1,335 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>reveal.js</title>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/sky.css">
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+
+    <!-- Mermaid -->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.css">
+    <style>
+      .mermaid .label  {
+        color: white;
+      }
+
+      .node rect {
+        fill: #005894;
+      }
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <style>
+      .reveal .footer {
+        position: absolute;
+        bottom: 1em;
+        left: 1em;
+        font-size: 0.7em;
+      }
+
+      /*Theme overrides*/
+      .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+        text-transform: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class='footer'>
+        <a href="https://grogs.github.io/scala-course">grogs.github.io/scala-course</a>
+      </div>
+      <div class="slides">
+        <section data-markdown data-separator="^~~~~" data-separator-vertical="^~" data-notes="^Note:">
+          <script type="text/template">
+
+            TODO sbt new playframework/play-scala-seed.g8
+          Expalin project structure with screenshots: https://www.playframework.com/documentation/2.6.x/Anatomy  ??          
+            
+          ## Full Stack Scala  
+
+          ### Lesson 2
+
+          ~~~~
+
+          ## Lesson Plan
+          Get familiar with Play, Scala.js, and the skeleton project we setup last week.
+    
+          ~~~~
+          ### Play Framework
+          Note:
+          * Who's used Play? ...heard of it?
+
+          ~
+          Play is a traditional MVC web framework for Scala and Java
+          Note: 
+          * Play 1.0 was a Java framework, first released in 2008/2009. I remember being really impressed with it. And then trying to use it with Scala which I was learning at the time - that was a little bit painful
+          * Play 2.0 was written in Scala, released in 2012. But it still very much targets both Java and Scala.
+          * Maintained by Lightbend as part of the "Lightbend Reactive Platform", alongside Akka and Legum
+
+          ~
+          Play is a high velocity framework. 
+          Note:
+          * In the same vein as something like Ruby on Rails
+          * It tries to make it quick to get an app up and running
+          * And had everything you need to build an app out of the box. So you don't have to go and evaluate a bunch of JSON Libraries, or REST client to call external servies, instead it's all there out of the box.
+
+          ~
+
+          You should have the skeleton working locally:
+          https://github.com/grogs/scala-course
+          ~
+          It has a really quick feedback loop. "Just-hit-refresh"  
+
+          Note:
+          * This is what got me interested in it back in 2010. I was just really impressed by this. It kind of felt like working with RoR or Django.
+          * *Demo* add a hello world endpoint.
+          * Change hello world to hello devoxx
+          *** and this allows the feedback loop to be on par with ruby on rails or django
+          * The cost of this is that you're locked into SBT or Gradle. 
+          ** Play needs to hook into your build tool to do this. 
+          ** So using Play with Play would work, but you lose live reload and there's a few other ways in which it's just... less documented
+          ~
+          It has everything you need to build web backends out-of-the-box  
+          - Templating
+          - JSON library
+          - Dependency Injection
+          - REST client
+          - WebSockets/Server-Sent Events
+
+          Note: 
+          * You can switch out components if you like, but it's nice that's there's a nice default.
+          * There's been a
+          **Demo**
+          * Templates - type safety. 
+          ** Change `content: Html` in `main.scala.html` to a `java.util.Date`.
+          ** Refresh. Compilation error. 
+          *** Sidenote - Compilation errors in the browser are nice, but not something you want in prod - so these only happen during development
+          ~
+          ### It's scalable.
+          * Powered by Netty 
+          * Upcoming 2.6.x powered by Akka HTTP. 
+          * If your Actions are async and return Futures, then you're not using a thread per request.
+
+          Note:
+          * To take advantage of it, you have to make it asynchronous.
+          * **Demo** change `index` to get IP from ifconfig.me
+          ```scala
+          def index = Action.async { implicit req => 
+            ws.url("hxxp://ifconfig.me")
+              .withHeaders(USER_AGENT -> "curl")
+              .get().map(r => Ok(r.body))
+          }
+          ```
+          ~
+          It's easy to add CoffeeScript and Less/Sass to your frontend
+
+          Note:
+          * So although it's a traditional MVC style framework, it's easy enough to build a rich frontend experience
+          * You don't need to go and learn another build tool, you can just manage these frontend dependencies from SBT
+          ~
+          Play is aimed at tradional web apps with server-side templating.
+
+          Note:
+          * And for better or worse, I think the web is headed towards richer more complicated frontends - and Play doesn't really cover that
+          ~
+          But, good for building RESTful APIs.
+
+          Note:
+          * I've used it on a number of projects just to provide an API, and ignored all the templating stuff.
+          * It's still been very valuable just for this fast reloading and ease of deployment
+          ~
+          Deployment is really simple
+
+          Note:
+          * Heroku has built in support for it
+          * Demo `sbt docker:publishLocal`
+          * oops, no crypto secret. Play can handle signing session cookies CSRF tokens for you, but it needs an encryption secret, and it won't let you run it in production mode otherwise.
+          ** To fix this, we just add `play.crypto.secret` to application.conf
+          * ok, run i can run it with `docker run -p 1337:9000 play-scala-seed:1.0-SNAPSHOT`
+          * then browse to it and show index and hello endpoints
+          * there's other ways of deploying which you can read up on.
+          ** And this is another strength. Play is mature and has a big community. Really good documentation and lots of stuff on stackoverflow
+
+          ~~~~
+          ## Scala.js
+          ~
+          So what is Scala.js?
+          ~
+          A Scala to JavaScript compiler
+
+          Note:
+
+          Started by S√©bastien Doeraene at EPFL around 3.5 years ago 
+
+          Hooks into the Scala compiler, and instead of emitting JVM bytecode, it emits JavaScript
+
+
+          ~
+          You can use it to write your JavaScript web frontend.  
+
+          But there are other usecases.  
+
+          Note:
+          * Web frontend is where most of the community's effort is going, but there's nothing that technically limits it
+          * People have used it with NodeJS on the server.
+          * I've used that a little myself: Electron with Scala.js, which leverages NodeJS
+          ~
+          To use it, add a plugin to your SBT build, and enable it for one of your projects.
+
+          Note:
+          * So this assumes you're using SBT. Gradle and Maven aren't supported.
+          * You can projects that are cross compile projects for JVM and JS, or just pure JS projects.
+          * Not everything works (a lot of the Java stdlib isn't available, which Scala stdlib uses).
+          ** But there's enough for it to be usable for a lot of usecases.
+          ~
+          Or clone one of the [skeleton projects](https://www.scala-js.org/libraries/skeletons.html) to get started: 
+          - [A pure Scala.js project](https://github.com/lihaoyi/workbench-example-app)
+          - [Play server and Scala.js client](https://github.com/vmunier/play-with-scalajs-example)
+          - [Scala.js targetting NodeJS](https://github.com/rockymadden/scala-node-example)
+
+          ~
+          Why use Scala.js?  
+
+          Note:
+          * We're quite used to web frontends being a seperate codebase with a largely seperate dev team.
+          * But there's a few advantages to having one codebase with shared code across the frontend and backend, which I find quite compelling
+          ~
+          Share domain model and business logic across client and server.  
+
+          You can refactor some code on the server and the template will be updated!  <!-- .element: class="fragment" -->
+
+          Note:
+          * You can refactor code (e.g. rename a field on a class in your domain model) and the frontend is just update, without a coordination overhead.
+          * E.g. Validation logic - you want to do validation on the client-side to provide an rich interactive experience...
+          ** But you need to run it on the server-side to make sure it can't be bypassed.
+          ** It seems a shame to write that twice. Overhead, and there can be differences, which makes it for a poor user experience.
+          ~
+          Make the client more typesafe  
+
+          Catch more errors at compile time
+
+          Note: 
+          Much moreso than JavaScript.  
+          Even linters aren't going to get you that much typesafety. I'm sure they're getting better and better, but that can't compete with a language with a much richer type system.
+          ~
+          The type safety goes further than Typescript.
+
+          In TypeScript, you can optionally add types.  
+          In Scala.js, you can optionally go Dynamic.<!-- .element: class="fragment" -->
+
+          Note:
+          * Fundermentally, in typescript you can optional add types and gradually make parts of your codebase more typesafe.
+          * But with Scala.js, by default everything is typed and you can optionally go dynamic
+          ** allowing you to call potentially non-existing fields or methods on an object.
+          ** Which can be very useful for using an existing JavaScript library, but is something you really want to avoid.
+          ~
+          Even your templates are typesafe  
+
+          Much like Play's server side templating  
+
+          [Rapture HTML Demo](https://embed.scalafiddle.io/embed?sfid=hMgI9Bu/1) <!-- .element: class="fragment" -->
+
+          Note:
+          * People are already used to generating HTML from code, via React. 
+            * This is popular in Scala.js
+          * Jon Pretty's Rapture HTML takes this to the extreme. 
+            * HTML element nesting constaints at compile time
+            * and even 'style' attribute's CSS validated at compile time. 
+            * [Example](https://embed.scalafiddle.io/embed?sfid=hMgI9Bu/1)
+            * See 'Principles of Elegance' talk from ScalaDays NY 2016
+
+          ~ 
+          It's more mature/production ready than you may think.  
+
+          Note:
+          * No longer experimental (since Feb 2015). 
+          * Really, I think there's a chicken and egg problem.
+          ** People are hesitant to adopt Scala.js because there's not much adoption - but that's self fulfilling. 
+          ~
+          Already has a rich ecosystem.
+
+          ~
+          Lots of existing pure scala libraries already cross-compile:
+          - Scalaz
+          - Cats
+          - Shapeless
+          - Monix
+          - Circe
+          - Rapture
+          - Most of the standard library, e.g. Futures
+
+          <!--
+            TODO
+            Dive into pure-scala libraries
+              Futures map very well to JavaScript promises and allow you to move away from callback hell.
+            -->
+          ~
+          Typesafe fascades for existing libraries (varying quality):
+          - DOM
+          - jQuery
+          - React
+          - Angular
+          - Vue.js
+          - D3
+
+          <!--
+            TODO
+            TALK ABOUT REACT 1.0
+            Dive into the Fascades
+            DOM is very good
+          -->
+          ~
+          Built for Scala.js:
+          - ScalaTags
+          - ScalaCss
+          - Diode
+          - uPickle and BooPickle
+          - autowire
+          - workbench
+
+          ~
+          Scala.js looks similar to JavaScript/ES6, but with types.
+
+          [Demo](https://embed.scalafiddle.io/embed?sfid=8D8UXdW/6)
+
+          </script>         
+        </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        history: true,
+
+        // More info https://github.com/hakimel/reveal.js#dependencies
+        dependencies: [
+          { src: 'plugin/markdown/marked.js' },
+          { src: 'plugin/markdown/markdown.js' },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        ]
+      });
+    </script>
+
+    <!-- Mermaid -->
+    <script src="https://cdn.rawgit.com/knsv/mermaid/6.0.0/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+  </body>
+</html>
