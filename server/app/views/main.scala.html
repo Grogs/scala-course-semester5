@@ -21,5 +21,8 @@
         @content
 
         @scalajs.html.scripts("client", routes.Assets.versioned(_).toString, name => getClass.getResource(s"/public/$name") != null)
+        <script type="application/javascript">
+            App().main()
+        </script>
     </body>
 </html>
