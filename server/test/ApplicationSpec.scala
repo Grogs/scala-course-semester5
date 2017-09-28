@@ -24,7 +24,7 @@ class ApplicationSpec extends PlaySpec with GuiceOneAppPerTest {
       val home = route(app, FakeRequest(GET, "/")).get
 
       status(home) mustBe OK
-      contentType(home) mustBe Some("text/plain")
+      contentType(home) mustBe Some("text/html")
     }
 
   }
