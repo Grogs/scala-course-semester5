@@ -10,21 +10,26 @@ class Lesson2 extends PlaySpec with GuiceOneAppPerTest {
     "have an endpoint to return the time" in {
       val time = route(app, FakeRequest(GET, "/time")).get
 
-      status(time) mustBe OK
+      withClue(
+        "You will need to add a new entry to the routes file, and a method to a Controller") {
+        status(time) mustBe OK
+      }
     }
 
     "actually return the time" in {
       val time = route(app, FakeRequest(GET, "/time")).get
 
-      status(time) mustBe OK
-      contentAsString(time) must include (System.currentTimeMillis().toString.take(8))
+      withClue("You should return the current time. You can get this from System.currentTimeMillis") {
+        contentAsString(time) must include(System.currentTimeMillis().toString.take(8))
+      }
     }
 
     "return the time as HTML" in {
       val time = route(app, FakeRequest(GET, "/time")).get
 
-      status(time) mustBe OK
-      contentType(time) mustBe Some("text/html")
+      withClue("Use a view to render this page") {
+        contentType(time) mustBe Some("text/html")
+      }
     }
 
   }
