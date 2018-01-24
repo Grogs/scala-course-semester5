@@ -104,7 +104,6 @@ Note:
 * You should be able to go away and build your own rich web applications
 
 Note:
-* This isn't "Scala for Java developers" - although I think that'd be a good course and we may run one next semester.
 * Instead, we'll focus on using Scala/Play/Scala.js as a productive platform to build webapps end to end.
 * We'll use Play on the backend because it's really quick to get up and running, and provides a really nice developer experience.
 * We'll learn more about that next week.
@@ -122,8 +121,13 @@ Starting with some history of where it came from
 - __1996__ Java 1.0 released
 ~
 - __1997__ Pizza released by Martin Odersky and Philip Wadler
-  * Superset of Java. Compiled down to Java code. 
-  * Contained _polymorphism (AKA generics)_, _algebraic types_ (AKA case classes), _high order functions_
+  * Added some new features to Java:
+    * _polymorphism (AKA generics)_
+    * _algebraic types_ (AKA case classes)
+    * _high order functions_
+
+Note:
+This was a superset of Java and compiled down to Java.
 ~
 - __1998__ GJ released by Odersky, Wadler et al. 
   * Compiled to JVM bytecode. 
@@ -160,25 +164,13 @@ __2004__ Java 1.5 released, with generics from GJ
 </div></div>          
 ~
 ### Functional Programming
-~
-__Lambda calculus__ developed in 1930s  
-Note:
-in the US by Alonzo Church
 
-~
-__Lisp__ developed in 1950s  
 Note:
-by John McCarthy whilst he was at MIT
-~
-__ML__ developed in 1970s  
-Note:
-at Edinburgh University
-~
-__Haskell__ version 1.0 was released in 1990
-Note:
-* Design by commitee - but went pretty well. 
-* GHC, the dominant implementation, was initially developed at the University of Glasgow.
-* The two lead developers now work for Microsoft Research, still working on the language.
+ - These features in the Pizza language - generics, case classes, higher order functions - all came from functional programming, which itself has a long history.
+ - __Lambda calculus__ developed in 1930s
+ - __Lisp__ developed in 1950s
+ - __ML__ developed in 1970s
+ - __Haskell__ version 1.0 was released in 1990, 7 years before Pizza
 
 ~
 Odersky develops __Funnel__ 1999-2001
@@ -189,22 +181,20 @@ Note:
 * After working on Pizza and GJ
 * Precursor to Scala.
 ~
-### Scala  
-~
-__2004__ _Scala_ publically released
+__2004__ Scala publicly released
   * Blended OO and FP
   * Written in Java  
-  * Included features from Pizza
 Note:
-features like case classes and higher order functions
+Included features for Pizza like case classes and higher order functions. And more, like pattern matching.
 ~
-Current 2.x versions first released in __2006__  
+__2006__ Scala 2.x first released
 
-It was bootstrapped (written in Scala)  
+This is the current major version of Scala.
 
-Now we're up to 2.12  
 Note:
-This is the current version of Scala.
+We're up to 2.12 with 2.13 on the way.
+It was bootstrapped (written in Scala)
+
 ~
 Looking forward
 ~
@@ -214,28 +204,21 @@ Note:
 * Simplifies the theory underlying the language, and the compiler itself - a better base to iterate on
 * Should give us faster compilation, and much cleaner compiler codebase to evolve
 ~
-To review - what is Scala?
-~
-Scala JVM-based language that blends OOP and FP.
-
-Note:
-Written by someone who knows a lot about compilers, who ever wrote an earleir version of the Java compiler.
+Scala is mature. It borrows a number of feature and concepts from Functional Programming.
 ~
 Why use Scala?
-~
-There are a number of reasons people come to the language:
 
 * Better Java
-* Performance / High Scalability
+* Performance / High Scalability; yet with a concise syntax.
 * Datascience ecosystem
 * Functional programming that's pragmatic
 
 Note:
 * Depending on what you're lookign for with a "better Java", Kotlin might be a better fit.
-* Performance/scalability is definitely a focus. We hear a lot about Akka, but functional programming and immutability are great for making scalable systems.
+* The JVM helps us out with performance/scalability. There's also the Akka ecosystem, which gives us another approach to concurrency. But also functional programming and immutability are great for making scalable systems.
 * Also, there are a number of people from a Python/Ruby background who wanted the performance of Java with nicer syntax
 * Datascience - they wanted to leverage the JVM ecosystem (mainly Hadoop), but they wanted a more concise language. Generally you do datascience with Scala because of the scalability, and the FP helps there.
-* I know a few people that were really into Haskell, but went with Scala due to the larger job market.
+* SOme people in the Scala community are really interested in languages like Haskell too, but use Scala due to the larger job market.
 
 
 ~~~~
