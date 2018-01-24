@@ -26,4 +26,4 @@ addSbtPlugin("com.vmunier" % "sbt-web-scalajs" % "1.0.3")
 
 libraryDependencies += "org.jsoup" % "jsoup" % "1.9.2" % Compile
 
-//addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-RC11")
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0")
