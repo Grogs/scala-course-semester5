@@ -10,8 +10,8 @@ class Lesson2 extends PlaySpec with GuiceOneAppPerTest {
     "have an endpoint to return the time" in {
       val time = route(app, FakeRequest(GET, "/time")).get
 
-      withClue(
-        "You will need to add a new entry to the routes file, and a method to a Controller") {
+      withClue("You will need to add a new entry to the routes file, and a method to a Controller: https://www.playframework.com/documentation/2.6.x/ScalaRouting") {
+
         status(time) mustBe OK
       }
     }
@@ -20,6 +20,8 @@ class Lesson2 extends PlaySpec with GuiceOneAppPerTest {
       val time = route(app, FakeRequest(GET, "/time")).get
 
       withClue("You should return the current time. You can get this from System.currentTimeMillis") {
+
+        status(time) mustBe OK
         contentAsString(time) must include(System.currentTimeMillis().toString.take(8))
       }
     }
@@ -27,7 +29,8 @@ class Lesson2 extends PlaySpec with GuiceOneAppPerTest {
     "return the time as HTML" in {
       val time = route(app, FakeRequest(GET, "/time")).get
 
-      withClue("Use a view to render this page") {
+      withClue("Create a view for this page which takes the time and outputs it. See Twirl template guide: https://www.playframework.com/documentation/2.6.x/ScalaTemplates") {
+
         contentType(time) mustBe Some("text/html")
       }
     }
