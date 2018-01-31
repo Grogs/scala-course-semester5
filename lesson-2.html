@@ -157,10 +157,9 @@ Note:
 Play has a really quick feedback loop. "Just-hit-refresh"  
 
 Note:
-* Now I'll demo some of Play's features.
 * This is what got me interested in it back in 2010. I was just really impressed by this. It kind of felt like working with RoR or Django.
-* *Demo* add a hello world endpoint.
-* Change hello world to hello fullstack
+* Let's demo that quickly...
+* *Demo* Change index page to say "Welcome to Lesson 2!"
 ** and this allows the feedback loop to be on par with ruby on rails or django
 * The cost of this is that you're locked into SBT or Gradle. 
 ** Play needs to hook into your build tool to do this. 
@@ -181,21 +180,6 @@ Note:
 ** Change `content: Html` in `main.scala.html` to a `java.util.Date`.
 ** Refresh. Compilation error. 
 *** Sidenote - Compilation errors in the browser are nice, but not something you want in prod - so these only happen during development
-~
-### It's scalable.
-* Powered by Akka HTTP which uses Java NIO  
-* If your Actions are async and return Futures, then you're not using a thread per request.
-
-Note:
-* To take advantage of it, you have to make it asynchronous.
-* **Demo** change `index` to get IP from ifconfig.me
-```scala
-def index = Action.async { implicit req => 
-  ws.url("hxxp://ifconfig.me")
-    .withHeaders(USER_AGENT -> "curl")
-    .get().map(r => Ok(r.body))
-}
-```
 ~
 Play is aimed at tradional web apps with server-side templating.
 
