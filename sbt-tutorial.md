@@ -19,8 +19,8 @@ E.g. `sbt ~test` will run all the tests after every change
 
 ### Useful test tasks
 * **`test-only`** lets you restrict the tests:
-    * `./sbt "test-only *.HotelsControllerSpec"`
+    * `./sbt "test-only lesson3.GeographyServiceTest"`
 * `test-only` can be combined with `~` and can run multiple tests:
-    * `./sbt "~test-only *.HotelsControllerSpec *.HotelsServiceTest"`
+    * `./sbt "~test-only lesson3.*"`
 * **`test-quick`** will only run tests that failed in the previous run. 
     * `sbt ~test-quick`  This will run all tests, and then only the tests that have failed.
