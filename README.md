@@ -6,9 +6,14 @@ Today, you will implement some required Scala services on the backend.
 
 Tasks
 * Checkout the `lesson3`branch
-* Run `sbt test` and you should see 12 test failures
-* Fix the failings tests.
-  * Start with the `GeographyServiceTest` 
-  * Then move onto the `HotelFinderServiceTest`
-  * And finally fix the tests in `HotelServiceTest`
-* Let us know once you've done this.
+  ```
+  git stash
+  git pull
+  git checkout lesson3
+  ```
+* Run `./sbt test` and you should see 3 test suites failing
+* Fix the failings tests. The test failures include clues.
+  * Start with the `GeographyServiceTest`, you'll need to implement the methods in `GeoographyService`.
+  * Then move onto the `HotelFinderServiceTest`, you'll need to implement the methods in `HotelFinderService`.
+  * And finally fix the tests in `HotelServiceTest`, you'll need to implement the methods in `HotelService`.
+* Let us know once you've done this, or grab Adam or myself for help!
