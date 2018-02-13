@@ -1,0 +1,406 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/sky.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<style>
+			.reveal .footer {
+			position: absolute;
+			bottom: 1em;
+			left: 1em;
+			font-size: 0.7em;
+			}
+
+			/*Theme overrides*/
+			.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+			text-transform: none;
+			/* font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif; */
+			}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-markdown data-separator="^~~~~" data-separator-vertical="^~" data-notes="^Note:">
+					<textarea data-template>
+## Fullstack Scala
+### Lesson 4
+~
+We'll continue with the previous exercises
+
+Note:
+- Because not everyone finished them
+- And importantly, there were a few concepts in those exercises which we should cover in more detail.
+- So you can go back and try to solve ethe exercises using more idiomatic Scala.
+~
+<small>but first...</small>  
+Let's explore two more features of Scala
+
+Note:
+Which are useful for solving lesson 3's exercises
+~~~~
+## Option
+
+~
+Scala's answer to null
+
+Note:
+- I'm sure you're all familiar with null... So what do you think of it?
+~
+>  "I call it my billion-dollar mistake  . . .   I couldn't resist the temptation to put in a null reference, simply because it was so easy to implement."
+
+<div style="text-align: right"><small>- Tony Hoare, creator of null</small></div>
+
+Note:
+- Tony Hoare, also known for inventing quicksort, added nulls to ALGOL W back in 1965, and isn't a fan.
+~
+nulls are bad  
+<br>
+NullPointerExceptions should not happen
+
+Note:
+- An NPE happens when they you try to access a field on something that is null. 
+- When you see an NPE, **really you're discovering something**: that in that piece of code, the object may or may not be present.
+- But **unfortunately, you're finding that out at runtime**! I'd much rather know about it at compile time.
+~
+Let's walk through a motivating example an Oracle blog post about Optional.  
+<br>
+<small>http://www.oracle.com/technetwork/articles/java/java8-optional-2175753.html</small>
+~
+```java
+String version = computer.getSoundcard().getUSB().getVersion();
+```
+
+Note:
+- What could go wrong with that code?
+- Well, not all computers have a soundcard (e.g. RPi).
+- Not all soundcards have USB
+~
+```java
+String version = "UNKNOWN";
+if(computer != null){
+  Soundcard soundcard = computer.getSoundcard();
+  if(soundcard != null){
+    USB usb = soundcard.getUSB();
+    if(usb != null){
+      version = usb.getVersion();
+    }
+  }
+}
+```
+Note:
+- This is the safe/defensive version.
+- How do I know this is safe? The API/types/compiler/IDE didn't direct me to this. Maybe some getters were annoated with @Nullable?
+- We can get too defensive; how do I know `usb.getVersion()` won't be null?
+~
+You can use Java 8's Optional instead
+
+Note:
+- This is largely accepted to be a problem, and in Java 8, Optional was added.
+- And it existed in Guava before that.
+- Who's familiar with Optional?
+~
+```java
+String name = computer.flatMap(Computer::getSoundcard)
+                      .flatMap(Soundcard::getUSB)
+                      .map(USB::getVersion)
+                      .orElse("UNKNOWN");
+```
+
+Note:
+- This is the safe version with Java 8's Optional.
+- If computer was Optional, and the usb getter returned Optional, we could have this.
+- flatMap is a higher order function, equivalent to doing a map and then a flatten. We'll cover this a bit more later on in the lesson.
+~
+Unfortunately, this was only added in Java 8.  
+
+<br>
+Existing APIs still use null
+
+Note:
+- You can't take advantage of this in Java very often.
+- E.g. System.getenv, or .get on a map or collection.
+- Most existing libraries/API that won't be changed to avoid breaking backwards compatibility, especially the standard library.
+~
+```scala
+sealed trait Option[+A] {
+	def get(): A
+	def map[B](f: A => B): Option[B]
+	def getOrElse[B>:A](default: => B): B
+	def orElse[B>:A](ob: => Option[B]): Option[B]
+	def filter(f: A => Boolean): Option[A]
+	def flatMap[B](f: A => Option[B]): Option[B]
+}
+
+case class Some[+A](get: A) extends Option[A]
+case object None extends Option[Nothing]
+```
+
+Note:
+- Scala has Option which is very similar to Java's Optional
+- Here's the simplified signature of Option.
+- get have .get, .map, .flatMap etc just like Java.
+- An important point is that this has been in Scala from the beginning. So the standard library and other libraries all heavily use this. 
+- You can rely on it being there in idiomatic Scala code/libraries. You don't have to be defensive.
+~
+```scala
+val name = computer.flatMap(_.getSoundcard)
+				   .flatMap(_.getUSB)
+				   .map(_.getVersion)
+				   .getOrElse("UNKNOWN")
+```
+
+Note:
+- Java's Optional example translates to this in Scala.
+- But in Scala it's idiomatic to pass Option's around. So it would become...
+~
+```scala
+val name = computer.flatMap(_.getSoundcard)
+				   .flatMap(_.getUSB)
+				   .map(_.getVersion)
+```
+
+Note:
+- Whomever uses `name` has more imformation, just from the type signature.
+- Now if any field wasn't present the caller gets backan empty Option (AKA None).
+- If we had of returned UNKNOWN, the caller may well have checked for that string later.
+~
+But we can rewrite that again:
+
+```scala
+val name = for {
+  c   <- computer
+  sc  <- c.getSoundcard
+  usb <- sc.getUSB
+} yield usb.getVersion
+```
+
+Note:
+- This brings us into another feature in Scala.
+- This is called a for-comprehension.
+- You'll notice the `for` keyword. So this kind of looks like a for loop.
+- But we're not working with a list, so what on earth is going on?!
+~~~~
+## For-comprehensions
+
+Note:
+- That last example used a for-comprehension.
+- Something similar to a for loop, which can also work on options.
+~
+foreach
+
+```scala
+val languages = List("Java", "Scala", "Kotlin")
+
+for (lang <- languages) {
+  println(s"$lang is the best!")
+}
+```
+
+Note:
+- Here's a "for-loop" in Scala
+- Looks similar to Java
+- But actually, this is syntacic sugar for...
+~
+foreach
+
+```scala
+val languages = List("Java", "Scala", "Kotlin")
+
+for (lang <- languages) {
+  println(s"$lang is the best!")
+}
+
+languages.foreach( lang => 
+	println(s"$lang is the best!")
+)
+```
+
+Note:
+- But really, this is a "for-comprehension"
+- The compiler changes it into foreach; these are completely equivalent
+~
+map (in Java)  
+
+```java
+List<Integer> numbers = ...
+
+
+List<Integer> squares = new ArrayList<>();
+for (int n : numbers) {
+  squares.add(n ^ 2)
+}
+
+List<Integer> squares2 = numbers.stream().map((x) -> x ^ 2)
+                          .collect(Collectors.toList());
+```
+~
+map (in Scala)  
+
+```scala
+val numbers = 1 to 10
+
+val squares = for (n <- numbers) yield n ^ 2
+
+val squares2 = numbers.map(n => n ^ 2)
+```
+
+Note:
+- Just like if-statements and everything else, for-comprehensions return a value.
+- With foreach, the point is to have a side effect. So there's nothing to return and `Unit` is returned.
+- But here, notice the `yield` keyword.
+- We're going through a list, and returning a new value for each number in the list.
+- The yield in the for-comprehension gets turned into a .map operation.
+~
+filter
+
+```scala
+val languages = List("Java", "Scala", "Kotlin")
+
+languages.filter( _ == "Scala" ).foreach( lang => 
+	println(s"$lang is the best!")
+)
+```
+
+Note:
+- This is how we would filter with the combinators/higher order functions.
+- It looks very similar to Java 8
+~
+filter
+
+```scala
+val languages = List("Java", "Scala", "Kotlin")
+
+for {
+  lang <- languages
+  if lang == "Scala"
+} {
+  println(s"$lang is the best!")
+}
+```
+
+Note:
+- We can also filter inside a for-comprehension
+- Note the multiline for, and that we switch to curly braces.
+~
+flatMap
+
+```scala
+val languages = List("Java", "Scala", "Kotlin")
+def books(language: String): Seq[String]
+
+for( lang <- languages ) {
+  for (book <- books(lang)) {
+    println(s"You should check out $book")
+  }
+}
+```
+
+Note:
+- Here's a nested loop. This is fine when you want to have a side effects.
+~
+flatMap
+
+```scala
+val languages = List("Java", "Scala", "Kotlin")
+def books(language: String): Seq[String]
+
+val allBooks = languages.flatMap( lang => books(language))
+
+val allBooks2 = languages.map( lang => books(language)).flatten
+```
+
+Note:
+- If we wanted to return a list of books, then if we want to avoid having a mutable list, flatMap is the answer.
+- We can map and then flatten, but one reason we avoid that: it would create an unneccessary intermediate collection. 
+~
+flatMap
+
+```scala
+val languages = List("Java", "Scala", "Kotlin")
+def books(language: String): Seq[String]
+
+val allBooks = for {
+  lang <- languages
+  book <- books(lang)
+} yield book
+```
+
+Note:
+- This is a flatMap using for-comprehensions
+~
+flatMap on Option
+
+```scala
+case class Hotel(id: Long, name: String, coordinates: Coordinates, images: Seq[String])
+def fetchHotel(id: Long): Option[Hotel]
+
+val featuredImage = fetchHotel(123).flatMap(_.images.headOption)
+
+val featuredImage2 = for {
+  hotel <- fetchHotel(123)
+  firstImage <- hotel.images.headOption
+} yield firstImage
+```
+~~~~
+Continue with previous exercises. 
+
+<br>
+
+Solution checklist:
+<small>
+- no vars
+- no mutable collections
+- try using for-comprehension instead of map/filter/flatMap
+~~~~
+<small>The lesson is coming to an end...</small>
+### Feedback:
+https://goo.gl/forms/67HICN14EizieXhJ2
+
+</small>
+
+					</textarea>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				history: true,
+        slideNumber: true,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'socket.io/socket.io.js', async: true },
+		      { src: 'plugin/notes-server/client.js', async: true }
+				]
+			});
+		</script>
+	</body>
+</html>
