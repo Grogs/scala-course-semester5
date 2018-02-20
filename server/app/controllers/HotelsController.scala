@@ -12,8 +12,17 @@ class HotelsController @Inject()(hotelsService: HotelsService, webJarAssets: Web
 
     val distance = radius.toDouble
 
-    //Create a new view and call it with the search results, which you can get from HotelsService
-    InternalServerError
+    if (distance > 0) {
+      Ok(
+        views.html.search(
+          destination, radius,
+          hotelsService.search(destination, distance),
+          webJarAssets
+        )
+      )
+    } else {
+      BadRequest("Invalid distance")
+    }
   }
 
 }
