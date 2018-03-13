@@ -19,7 +19,6 @@ class HotelFinderService @Inject()(catalogueService: HotelCatalogueService) {
       distance = haversine(near.lat, near.long, coordinates.lat, coordinates.long)
       if distance <= radius
     } yield id
-
   }
 
   def haversine(lat1:Double, lon1:Double, lat2:Double, lon2:Double)={

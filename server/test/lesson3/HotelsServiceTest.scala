@@ -1,13 +1,13 @@
 package lesson3
 
 import org.scalatest.{FunSuite, Matchers}
-import services.hotels.{GeographyService, HotelCatalogueService, HotelFinderService, HotelsService}
+import services.hotels.{GeographyService, HotelCatalogueService, HotelFinderService, HotelsServiceImpl}
 
 class HotelsServiceTest extends FunSuite with Matchers {
 
   val catalogueService = new HotelCatalogueService
 
-  val service = new HotelsService(
+  val service = new HotelsServiceImpl(
     catalogueService,
     new GeographyService,
     new HotelFinderService(catalogueService)

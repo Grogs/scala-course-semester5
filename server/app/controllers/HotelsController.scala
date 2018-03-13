@@ -3,10 +3,10 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import play.api.mvc.{Action, InjectedController}
-import services.hotels.HotelsService
+import services.hotels.HotelsServiceImpl
 
 @Singleton
-class HotelsController @Inject()(hotelsService: HotelsService, webJarAssets: WebJarAssets) extends InjectedController {
+class HotelsController @Inject()(hotelsService: HotelsServiceImpl, webJarAssets: WebJarAssets) extends InjectedController {
 
   def search(destination: String, radius: String) = Action {
 
