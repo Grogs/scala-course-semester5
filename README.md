@@ -26,12 +26,13 @@ To do this, you can go through these steps on the page load. Remember, the code 
     * Generate the new table HTML using the `searchResults` template that was refactored out into the shared project.
     * Replace the previous table with the new table.
     
-4. Remove the Search button, it's not needed anymore!
+### Exercise 2 - Remove the Search button, it's not needed anymore!
+For this you can either hide it with CSS, or remove it from the page completely.
 
-### Exercise 2 - Only update search results for valid destinations.  
+### Exercise 3 - Only update search results for valid destinations.  
 At the moment, if you type in Paris, you get intermediate empty search results until you finish typing.  
 Instead, don't update the results if it's empty, or alternatively, show a message saying nothing matches their criteria.
 
-### Exercise 3 - Autocompletion of destinations
+### Exercise 4 - Autocompletion of destinations
 Take a look at `fss.Autocomplete` and hook it up to the destination input
     
