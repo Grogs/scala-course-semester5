@@ -34,24 +34,7 @@
             </p>
 
             <p>
-                <table class="table">
-                    <tr>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Images</th>
-                    </tr>
-                    @for(hotel <- searchResults) {
-                        <tr>
-                            <td>@hotel.name</td>
-                            <td><a href="@gmapsLink(hotel)">Map</a></td>
-                            <td>
-                            @for(image <- hotel.images) {
-                                <img height="200px" src="@image" />
-                            }
-                            </td>
-                        </tr>
-                    }
-                </table>
+                @views.html.hotelsTable(searchResults)
             </p>
 
         </div>
