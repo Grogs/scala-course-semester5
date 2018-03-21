@@ -1,14 +1,17 @@
 package fss
 
-import org.scalajs.dom.{Event, document}
+import org.scalajs.dom.{Element, Event, document}
 import org.scalajs.dom.html.{Button, Input}
 import services.hotels.HotelsService
 import autowire._
+import google.maps.InfoWindowOptions
+import model.{Coordinates, Hotel}
 
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
-import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import org.scalajs.jquery.{JQueryEventObject, jQuery}
+
+import scala.scalajs.js
 
 @JSExportTopLevel("App")
 class App extends JSApp {
