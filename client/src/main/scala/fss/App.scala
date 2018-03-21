@@ -8,6 +8,7 @@ import autowire._
 import scala.scalajs.concurrent.JSExecutionContext.Implicits.queue
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
+import org.scalajs.jquery.{JQueryEventObject, jQuery}
 
 @JSExportTopLevel("App")
 class App extends JSApp {
@@ -17,81 +18,25 @@ class App extends JSApp {
   def distance() = document.getElementById("distance").asInstanceOf[Input]
   def searchButton() = document.getElementById("load-hotels").asInstanceOf[Button]
 
+  @JSExport
+  def main(): Unit = {
+    initialiseInteractiveSearch()
 
+    //Add event handler for modal, per https://getbootstrap.com/docs/3.3/javascript/#modals-events
+    jQuery("#mapModal").on("shown.bs.modal", onMapOpen _)
 
+    def onMapOpen(e: JQueryEventObject) = {
+      println("This runs when the user opens the map")
+      val dest = destination().value
+      val dist = distance().value.toLong
 
-
-
-  def notMain() = {
-
-    hotelsTables().innerHTML = ""
-
-    val res = Client[HotelsService].search("London", 5).call()
-    val res2 = res.foreach( hotels =>
-      println(hotels)
-    )
-
-    //Render table
-    views.html.hotelsTable(Nil).body
-
-
-    destination().onchange = (e: Event) => {}
-
-    destination().addEventListener("<type>", (e: Event) => {
-      destination().value
-      //callService
-      //renderTable
-      //updateTable
-    })
+      //Add map related code here
+    }
   }
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  @JSExport
-  def main(): Unit = {
+  private def initialiseInteractiveSearch() = {
 
     //EXERCISE 1
     def reload(destination: String, distance: Double) = {
@@ -121,5 +66,4 @@ class App extends JSApp {
     )
 
   }
-
 }
