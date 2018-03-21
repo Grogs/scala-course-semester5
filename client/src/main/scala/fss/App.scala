@@ -12,6 +12,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import org.scalajs.jquery.{JQueryEventObject, jQuery}
 
 import scala.scalajs.js
+import scala.scalajs.js.JSApp
 
 @JSExportTopLevel("App")
 class App extends JSApp {
