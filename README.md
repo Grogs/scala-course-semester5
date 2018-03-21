@@ -8,7 +8,7 @@ Steps:
 
 1. Add a button to open a bootstrap modal, where we'll display the map. 
     * Documentation: https://getbootstrap.com/docs/3.3/javascript/#modals
-    * Fix the failing test in `services.hotels.Lesson7`.  
+    * Fix the failing test in `services.hotels.Lesson8`.  
 
 2. Add an empty Map inside the modal.
     * Put the map related code in the `onMapOpen' function in `App` which runs every time the user opens the Map.
